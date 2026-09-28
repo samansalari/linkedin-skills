@@ -18,6 +18,47 @@
 
 > **On another platform too?** The same team ships matching marketing skill bundles for [X (Twitter)](https://github.com/sergebulaev/x-skills) · [Instagram](https://github.com/sergebulaev/instagram-skills) · [YouTube](https://github.com/sergebulaev/youtube-skills) · [TikTok](https://github.com/sergebulaev/tiktok-skills) · [Threads](https://github.com/sergebulaev/threads-skills) · [Facebook](https://github.com/sergebulaev/facebook-skills). Same voice engine, same approve-before-publish flow.
 
+## This fork: Saman Salari's build
+
+A personalised fork of [sergebulaev/linkedin-skills](https://github.com/sergebulaev/linkedin-skills) (MIT), based on upstream v1.1.14. Every skill below works as upstream describes. What this fork adds is a layer that makes the drafts sound like one specific person and read as UK LinkedIn.
+
+**Who it's for.** Saman Salari, an AI engineer in the UK working on generative AI pipelines: FLUX LoRA training, ComfyUI, diffusion models, multi-agent systems and LLM workflows. Profile: [linkedin.com/in/samansalari](https://www.linkedin.com/in/samansalari). Portfolio: [samansalari.com](https://samansalari.com).
+
+**What's added**
+
+| Path | What it does |
+|---|---|
+| `shared/profile-saman.md` | facts from his LinkedIn profile, split into three lenses (`ai`, `fullstack`, `bridge`), proof points, and a list of topics he can and can't credibly claim |
+| `shared/voice-saman.md` | his writing rules, banned words and phrases, and a table of the upstream rules they override |
+| `shared/uk-context.md` | British spelling, dates and £, UK tone, ecosystem references, compliance pointers, recruiter vocabulary |
+| `skills/*/references/saman-*.md` | skill-specific rules for post-writer, humanizer, profile-optimizer, interviewer, content-planner and employee-advocacy |
+| `scripts/build-zips.sh` | builds one self-contained zip per skill for claude.ai into `dist/` |
+| `scripts/sync-upstream.sh` | fetches upstream and rebases this fork onto it, stopping on conflicts |
+
+Nine skills open with a short "personal context" block that points at the three `shared/` files. Their voice and UK rules win over any conflicting upstream guidance. The upstream files themselves are untouched apart from those inserted blocks.
+
+**What changes in use**
+
+- Drafts use lowercase "i", `...` for pacing, and no em dashes, emojis or hashtags. Banned words are removed at any density.
+- `linkedin-post-writer` takes a `lens` input (`ai`, `fullstack` or `both`, default `both`). If there's no real example to draw on, it asks for one instead of writing generic advice.
+- `linkedin-profile-optimizer` outputs a diff against his current profile, plus a table showing which source backs each claim.
+- Numbers in drafts come only from the profile or from him in the session. Anything unconfirmed is marked `TODO(saman)` in `shared/profile-saman.md` and stays out of posts until it's resolved.
+- Posting times are never quoted from upstream's US and EU tables. The skills say a time is a guess unless it comes from his own analytics.
+- Client and campaign work is treated as confidential by default.
+
+**Using it**
+
+    git clone https://github.com/samansalari/linkedin-skills.git
+    cd linkedin-skills
+
+Claude Code picks the skills up from `.claude/skills/`. For claude.ai, run `scripts/build-zips.sh` and upload the zips from `dist/`. They're draft-only there, because publishing needs the Python clients that stay outside the zips. To keep up with upstream, run `scripts/sync-upstream.sh`. It never resolves conflicts for you, and after a rebase your next push needs `git push --force-with-lease`.
+
+**Public repo.** Everything here is visible on GitHub. `shared/profile-saman.md` only holds what his public profile already says, with contact details left out. Interview answers go to `shared/story-bank-saman.md`, which is gitignored. Upstream's blank `references/voice-profile.md` and `references/story-bank.md` must stay blank, and upstream's tests enforce it.
+
+**Want your own version?** Replace the three `shared/` files with your profile, voice and market, delete the `saman-*.md` references you don't need, and keep the licence and upstream credit. Everything else works as is.
+
+**Optional services.** The Apify, Publora and Pixfaro sections below still apply. Reading LinkedIn through Apify may conflict with LinkedIn's User Agreement, so decide before setting `APIFY_TOKEN`. `shared/README.md` has the full credentials table.
+
 ## Install
 
 Pick whichever way you use Claude Code or Codex:
